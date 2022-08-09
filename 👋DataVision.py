@@ -259,7 +259,7 @@ with tab3:
         name_car = []
         for i in range(len(nom_car)):
             name_car.append([i,nom_car[i][0]])
-        option = st.multiselect('Choisir une voiture',name_car)
+        option = st.multiselect('Choisir une voiture',name_car,name_car)
         st.session_state.nom = option
         options = st.session_state.nom
         Données = []
