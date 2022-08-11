@@ -270,13 +270,8 @@ with tab3:
         st.write("")
 
 with tab4:
-    
-    
-    
-    try:
-        st.title("Temps mobile")
-        
-        def F2(nom_car):
+    st.title("Temps mobile")
+    def F2(nom_car):
             name_car = []
             for i in range(len(nom_car)):
                 name_car.append([i,nom_car[i][0]])
@@ -294,82 +289,91 @@ with tab4:
                 G = GraphTime(options_1).graph()[0]
                 Données.append(GraphTime(options_1).graph()[1])
             return G,File(Données[0]).file()
-        st.title("Jours")
-        T_1 = F2(st.session_state.temps_jour_mobile[0])
-        T_1[0]
-        st.write(T_1[1])
-        st.title("SEMAINES")
-        T_2 = F2(st.session_state.temps_jour_mobile[1])
-        T_2[0]
-        st.write(T_2[1])
-        st.title("MOIS")
-        T_3 = F2(st.session_state.temps_jour_mobile[2])
-        T_3[0]
-        st.write(T_3[1])
-        st.session_state.excel_jr_tm = [T_1[1],T_2[1],T_3[1]]
+    st.title("Jours")
+    T_1 = F2(st.session_state.temps_jour_mobile[0])
+    T_1[0]
+    st.write(T_1[1])
+    st.title("SEMAINES")
+    T_2 = F2(st.session_state.temps_jour_mobile[1])
+    T_2[0]
+    st.write(T_2[1])
+    st.title("MOIS")
+    T_3 = F2(st.session_state.temps_jour_mobile[2])
+    T_3[0]
+    st.write(T_3[1])
+    st.session_state.excel_jr_tm = [T_1[1],T_2[1],T_3[1]]
+    st.title("Temps immobile")
+        
+    nom_cars = st.session_state.temps_jour_immobile
+    def F3(nom_cars):
+        name_cars = []
+        for i in range(len(nom_cars)):
+            name_cars.append([i,nom_cars[i][0]])
+        optionss = st.session_state.nom
+        Données = []
+        G = []
+        if len(optionss)==1:
+            G = GraphTime([nom_cars[optionss[0][0]]]).graph()[0]
+            Données.append(GraphTime([nom_cars[optionss[0][0]]]).graph()[1]) 
+        else:
+            
+            options_1 = []
+            for i in range(len(optionss)):
+                options_1.append(nom_cars[optionss[i][0]])
+            G = GraphTime(options_1).graph()[0]
+            Données.append(GraphTime(options_1).graph()[1])
+        return G,File(Données[0]).file()
+    st.title("Jours")
+    T_11 = F3(st.session_state.temps_jour_immobile[0])
+    T_11[0]
+    st.write(T_11[1])
+    st.title("SEMAINES")
+    T_21 = F3(st.session_state.temps_jour_immobile[1])
+    T_21[0]
+    st.write(T_21[1])
+    st.title("MOIS")
+    T_31 = F3(st.session_state.temps_jour_immobile[2])
+    T_31[0]
+    st.write(T_31[1])
+    st.session_state.excel_jr_tim = [T_11[1],T_21[1],T_31[1]]
+    col1_111,col1_122 = st.columns(2)
+    with col1_111:
+         with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+             # Write each dataframe to a different worksheet.
+             st.session_state.excel_jr_d[0].to_excel(writer, sheet_name='Distance Jours')
+             st.session_state.excel_jr_d[1].to_excel(writer, sheet_name='Distance Semaines')
+             st.session_state.excel_jr_d[2].to_excel(writer, sheet_name='Distance Mois')
+             st.session_state.excel_jr_tm[0].to_excel(writer, sheet_name='Temps Mobile Jours')
+             st.session_state.excel_jr_tm[1].to_excel(writer, sheet_name='Temps Mobile Semaines')
+             st.session_state.excel_jr_tm[2].to_excel(writer, sheet_name='Temps Mobile Mois')
+             st.session_state.excel_jr_tim[0].to_excel(writer, sheet_name='Temps Immobile Jours')
+             st.session_state.excel_jr_tim[1].to_excel(writer, sheet_name='Temps Immobile Semaines')
+             st.session_state.excel_jr_tim[2].to_excel(writer, sheet_name='Temps Immobile Mois')
+             # Close the Pandas Excel writer and output the Excel file to the buffer
+             writer.save()
+             st.header("Téléchargher toutes les données : distances, temps mobiles , temps immobiles au format excel")
+             st.download_button(
+                 label="Télécharger",
+                 data=buffer,
+                 file_name="Données GPS.xlsx",
+                 mime="application/vnd.ms-excel"
+             )
+    with col1_122:
+        st.write("")
+    try:
+        pass
+        
+        
+        
         
 ######################################################################{###########}     
-        st.title("Temps immobile")
         
-        nom_cars = st.session_state.temps_jour_immobile
-        def F3(nom_cars):
-            name_cars = []
-            for i in range(len(nom_cars)):
-                name_cars.append([i,nom_cars[i][0]])
-            optionss = st.session_state.nom
-            Données = []
-            G = []
-            if len(optionss)==1:
-                G = GraphTime([nom_cars[optionss[0][0]]]).graph()[0]
-                Données.append(GraphTime([nom_cars[optionss[0][0]]]).graph()[1]) 
-            else:
-                
-                options_1 = []
-                for i in range(len(optionss)):
-                    options_1.append(nom_cars[optionss[i][0]])
-                G = GraphTime(options_1).graph()[0]
-                Données.append(GraphTime(options_1).graph()[1])
-            return G,File(Données[0]).file()
         
-        st.title("Jours")
-        T_11 = F3(st.session_state.temps_jour_immobile[0])
-        T_11[0]
-        st.write(T_11[1])
-        st.title("SEMAINES")
-        T_21 = F3(st.session_state.temps_jour_immobile[1])
-        T_21[0]
-        st.write(T_21[1])
-        st.title("MOIS")
-        T_31 = F3(st.session_state.temps_jour_immobile[2])
-        T_31[0]
-        st.write(T_31[1])
-        st.session_state.excel_jr_tim = [T_11[1],T_21[1],T_31[1]]
         
-        col1_111,col1_122 = st.columns(2)
-        with col1_111:
-             st.title('Télécharger')
-             with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-                 # Write each dataframe to a different worksheet.
-                 st.session_state.excel_jr_d[0].to_excel(writer, sheet_name='Distance Jours')
-                 st.session_state.excel_jr_d[1].to_excel(writer, sheet_name='Distance Semaines')
-                 st.session_state.excel_jr_d[2].to_excel(writer, sheet_name='Distance Mois')
-                 st.session_state.excel_jr_tm[0].to_excel(writer, sheet_name='Temps Mobile Jours')
-                 st.session_state.excel_jr_tm[1].to_excel(writer, sheet_name='Temps Mobile Semaines')
-                 st.session_state.excel_jr_tm[2].to_excel(writer, sheet_name='Temps Mobile Mois')
-                 st.session_state.excel_jr_tim[0].to_excel(writer, sheet_name='Temps Immobile Jours')
-                 st.session_state.excel_jr_tim[1].to_excel(writer, sheet_name='Temps Immobile Semaines')
-                 st.session_state.excel_jr_tim[2].to_excel(writer, sheet_name='Temps Immobile Mois')
-                 # Close the Pandas Excel writer and output the Excel file to the buffer
-                 writer.save()
-                 st.header("Téléchargher toutes les données : distances, temps mobiles , temps immobiles au format excel")
-                 st.download_button(
-                     label="Télécharger",
-                     data=buffer,
-                     file_name="Données GPS.xlsx",
-                     mime="application/vnd.ms-excel"
-                 )
-        with col1_122:
-            st.write("")
+        
+        
+        
+            
         
     except:
         pass
