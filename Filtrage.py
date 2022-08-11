@@ -4,7 +4,7 @@ from datetime import datetime
 from datetime import date
 import calendar
 import pandas as pd
-
+print()
 class Coupure:
     def __init__ (self,n_d_f) :
         self.n_d_f = n_d_f
@@ -84,15 +84,11 @@ class Ordre :
             return x_1
         
         Q = self.n_d_f
-        #print(len(Q))
-        #print(Q)
-        #print(len(Q))
         A=[int(Q[0][:4]),int(Q[0][5:7])]
         B=[int(Q[-1][:4]),int(Q[-1][5:7])]
         # A[0],B[0] == l'année
         # A[1],B[1] == mois
         obj = calendar.Calendar()
-        #print(len(Q))
         sd = [] # liste de semaines
         d = [] # liste de mois ordonées
         if (A[0]==B[0]) & (A[1]==B[1]) :
@@ -140,7 +136,6 @@ class Groupes:
             # n == nombre de subdivision
             h=[0] # indice de slicing
             z=[]   # liste de subdivision
-            #print(len(p))
             if n<=len(p):
                 for i in range(0,len(p),1):
                     if i%n==n-1:
@@ -149,14 +144,11 @@ class Groupes:
                 for i in range(0,len(h)-1,1):
                     if type(p[0]) != str:
                         z_1=p[h[i]:h[i+1]]
-               #         print(1)
                         z_2=z_1[0]
                         for j in range(1,len(z_1),1):
                             z_2 = z_2 + z_1[j]
                         z.append(z_2)
                     else:
-                        print(2)
-              #          print(p[h[i]:h[i+1]])
                         z.append(p[h[i]:h[i+1]])
 
                 if len(p)%n!=0:
@@ -167,11 +159,9 @@ class Groupes:
                             q = q + p[h[-1]:][i]
                         z.append(q)
                     except :
-             #           print(p[h[-1]:])
                         z.append(p[h[-1]:])
             else:
-                print("La valeur de subdivision doit être infériéure à ",len(p))
-            #print(h)
+                print("La valeur de subdivision doit être infériéure ou égale à ",len(p))
             return z 
         
         S=Groupe(self.p,self.n)
@@ -182,7 +172,6 @@ class Groupes:
             for j in self.n_d_f :
                 if S[i].count(j):
                     G.append(j)
-            #print("a",i,G)
             if len(G)!=0:
                 H.append(G)
                 S_1.append(S[i])
