@@ -11,6 +11,8 @@ import json
 from streamlit_lottie import st_lottie
 import numpy as np
 import altair as alt
+import io
+buffer = io.BytesIO()
 ########## page configuration #############
 st.set_page_config(
      page_title=" ",
@@ -138,152 +140,129 @@ with tab2:
     
     
     try:
+       ############## JOURS #######################
+       if 'distance_Jour' not in st.session_state:
+           st.session_state.distance_Jour = []
+           
+       if 'temp_jour_mobile' not in st.session_state:
+           st.session_state.temps_jour_mobile = []
+           
+       if 'temp_jour_immobile' not in st.session_state:
+          st.session_state.temps_jour_immobile = []
+       
+       if 'excel_jr_d' not in st.session_state:
+           st.session_state.excel_jr_d = []
+       
+       
+       if 'excel_jr_tm' not in st.session_state:
+           st.session_state.excel_jr_tm = []
+       
+       
+       if 'excel_jr_tim' not in st.session_state:
+           st.session_state.excel_jr_tim = []
+           
+       
+       #----------------------------------------------#
         
-        if 'distance_Jour' not in st.session_state:
-            st.session_state.distance_Jour = []
-            
-        if 'temp_jour_mobile' not in st.session_state:
-            st.session_state.temps_jour_mobile = []
-            
-        if 'temp_jour_immobile' not in st.session_state:
-           st.session_state.temps_jour_immobile = []
+       ###############################################    
+       if 'nom' not in st.session_state:
+           st.session_state.nom = []
+       
+       x = c_h(fin)-c_h(debut) # Calcul du temps d'une Jou
+       st.write("Vous considérez qu'une journé fait : ",x , "Heures")
+       r_1 = [] # Tableau qui contient les datasets filtré sur l'heure journalié
+       for i in range(len(r[0])):
+           var_1 = SeparationEnJour(DataSet(r[0][i]).DataFrame() ,debut ,fin ).Separe()
+           r_1.append([ r[1][i]  , var_1[0]  , var_1[1]]) # [nom de la voiture , dataset]
+       st.session_state.data = r_1 # enrégistre le tableau dans la session courante
+       datas = st.session_state.data # Variable sur le Tableau des dataset : datas
+       
+       
+       #######JOURS############
+       distance_jour = [] # nom_voiture,dataframe,jours de mobilité
+       temps_jour_mobile = []
+       temps_jour_immobile = []
+       
+       #######SEMAINES############
+       distance_sem = [] 
+       temps_sem_mobile = []
+       temps_sem_immobile = []
+       #######MOIS############
+       distance_m = [] 
+       temps_m_mobile = []
+       temps_m_immobile = [] 
         
-        if 'periode' not in st.session_state:
-            st.session_state.periode = []
-            
-        if 'nom' not in st.session_state:
-            st.session_state.nom = []
-        
-        x = c_h(fin)-c_h(debut) # Calcul du temps d'une Jou
-        st.write("Vous considérez qu'une journé fait : ",x , "Heures")
-        r_1 = [] # Tableau qui contient les datasets filtré sur l'heure journalié
-        for i in range(len(r[0])):
-            var_1 = SeparationEnJour(DataSet(r[0][i]).DataFrame() ,debut ,fin ).Separe()
-            r_1.append([ r[1][i]  , var_1[0]  , var_1[1]]) # [nom de la voiture , dataset]
-        st.session_state.data = r_1 # enrégistre le tableau dans la session courante
-        datas = st.session_state.data # Variable sur le Tableau des dataset : datas
-        #st.write(datas)
-        #st.write(st.session_state.data)
-        #st.write("étape1")
-        
-        
-        distance_jour = [] # nom_voiture,dataframe,jours de mobilité
-        temps_jour_mobile = []
-        temps_jour_immobile = []
-        for i in range(len(datas)):
-            distance_jour.append(Dist(datas[i],n_j).dist())
-            temps_jour_mobile.append(Tem(datas[i],n_j,x).temps()[0])
-            temps_jour_immobile.append(Tem(datas[i],n_j,x).temps()[1])
-        #st.write("étape2")
-        st.session_state.distance_Jour = distance_jour
-        st.session_state.temps_jour_mobile = temps_jour_mobile
-        st.session_state.temps_jour_immobile = temps_jour_immobile
-        #st.title("temps mobile")
-        #st.write(st.session_state.temps_jour_mobile)
-        #st.title("temps immobile")
-        #st.write(st.session_state.temps_jour_immobile)
-        
-        
-        #st.write(st.session_state.distance_Jour)
-        #st.write("étape3")
-        
-        
-            
-            #st.write(Dist(datas[0],n_j).dist())
-            #### DATAFRAME PAR SEMAINE
-            #d_1 = Groupes(jr,Z[1],1).G_J_S_M() # CETTE DONN2ES EST TR7S UTILES ? CE SONT LES SEMAINE D4ACTIVIT2
-            #d_sem = Groupes(jr,d_1[1],3).G_J_S_M() #semaine CONDITIONE PAR LA TAILLE DE N
-            #dat_sem = []
-           # for j in range(len(d_sem[0])):
-           ##     if len(d_sem[0][j]) == 1:
-            #        d = Distance(dat.loc[ d_sem[0][j][0]]).distance()
-            #        dat_sem.append([d , "Du " + d_sem[1][j][0] + " au " + d_sem[1][j][-1]  ])
-            #    else:
-            #        d = Distance(dat.loc[ d_sem[0][j][0]:d_sem[0][j][-1]]).distance()
-            #        dat_sem.append([d , "Du ♌" + d_sem[1][j][0] + " au " + d_sem[1][j][-1] ])
-            #
-            #### DATAFRAME PAR MOIS
-            #d_2 = Groupes(jr,Z[2],1).G_J_S_M()
-            #d_mois = Groupes(jr,d_2[1],1).G_J_S_M() #mois
-            #dat_mois = []
-            #for j in range(len(d_mois[0])):
-            #    if len(d_mois[0][j]) == 1:
-            #        d = Distance(dat.loc[ d_mois[0][j][0]]).distance()
-            #        dat_mois.append([d , "Du " + d_mois[1][j][0] + " au " + d_mois[1][j][-1]  ])
-            #    else:
-            #        d = Distance(dat.loc[ d_mois[0][j][0]:d_mois[0][j][-1]]).distance()
-            #        dat_mois.append([d , "Du " + d_mois[1][j][0] + " au " + d_mois[1][j][-1] ])
-            #DAT.append([dat_jour , dat_sem , dat_mois])
-            #########################################################################################
-            #d = Distance(dat).distance()
-           # v = Vitesse(dat).vitesse()
-           # di.append(d)
-           # vi.append(v)
-           # Pr.append([d_jour, d_sem ,d_mois])
-        
-        #st.session_state.vitesse = vi
-        #st.session_state.periode = Pr
-        #T = [] #temps mis et consort
-       # for i in range(len(st.session_state.vitesse)):
-       #     d = st.session_state.distance[i]
-       #     v = st.session_state.vitesse[i]
-       #     Q = Jrs[i]
-       #     T.append(Temps(d,v,len(Q),x).temps())
-       # st.session_state.temps = T
-        
-        
-        #d=DataSet(datas[0][0]).DataFrame()
-        #st.write(d)
-        #st.success("-2")
-        #Q=Coupure(d).DecoupeEnJour()
-        #st.success("-1")
-        #p = SeparationEnJour(d).Separe()[1]
-        #st.success("0")
-        #a=Distance(d).CalculDeDistanceParJour()
-        #st.success("1")
-        #v=Vitesse(d).Calcul_vitesse_moyenne()
-        #st.success("2")
-        #t=Temps(a,v,len(Q),p).Calcul_temps()
-        #st.session_state.dq
-        st.success("Bien chargé 😃")
+       for i in range(len(datas)):
+           #######JOURS############
+           distance_jour.append(Dist(datas[i],n_j,0).dist())
+           temps_jour_mobile.append(Tem(datas[i],n_j,0,x).temps()[0])
+           temps_jour_immobile.append(Tem(datas[i],n_j,0,x).temps()[1])
+           ######SEMAINES############
+           distance_sem.append(Dist(datas[i],n_s,1).dist())
+           temps_sem_mobile.append(Tem(datas[i],n_s,1,x).temps()[0])
+           temps_sem_immobile.append(Tem(datas[i],n_s,1,x).temps()[1])
+           ######MOIS############
+           distance_m.append(Dist(datas[i],n_m,2).dist())
+           temps_m_mobile.append(Tem(datas[i],n_m,2,x).temps()[0])
+           temps_m_immobile.append(Tem(datas[i],n_m,2,x).temps()[1])
+           
+       
+       ######MISE SOUS SESSION PERMANENTE#######
+       #######JOURS############
+       st.session_state.distance_Jour = [distance_jour,distance_sem,distance_m]
+       st.session_state.temps_jour_mobile = [temps_jour_mobile,temps_sem_mobile,temps_m_mobile]
+       st.session_state.temps_jour_immobile = [temps_jour_immobile,temps_sem_immobile,temps_m_immobile]
+       
+       #######SEMAINES############
+       
+       #######MOIS############
+       st.success("Bien chargé 😃")
     except : 
         st.title("Respecteer le format horaire ")
 #############################################################################
 with tab3:
+    
     try:
-        
         st.title(f"on considère qu'une journé à : {x} heures")
-        
-        nom_car = st.session_state.distance_Jour
-        
+        st.title("JOURS")
+        nom_car = st.session_state.distance_Jour[0]
         name_car = []
         for i in range(len(nom_car)):
             name_car.append([i,nom_car[i][0]])
         option = st.multiselect('Choisir une voiture',name_car,name_car)
         st.session_state.nom = option
-        options = st.session_state.nom
-        Données = []
-        if len(options)==1:
-            Graph([nom_car[options[0][0]]]).graph()[0]
-            Données.append(Graph([nom_car[options[0][0]]]).graph()[1]) 
-        else:
-            
-            options_1 = []
-            for i in range(len(options)):
-                options_1.append(nom_car[options[i][0]])
-            Graph(options_1).graph()[0]
-            Données.append(Graph(options_1).graph()[1])
         
-        col1_11,col1_12 = st.columns(2)
-        with col1_11:
-             nom = st.text_input('Entrer le nom du fichier avnt de télécharger')
-             submitted = st.button("Télécharger le fichier excel")
-             if submitted:
-                 
-                 File(Données[0]).file().to_excel(nom+".xlsx")  
-                 st.success("Votre fichier à été téléchargé avec succes 😃")
-        with col1_21:
-            st.write("")
+        def F1(nom_car):
+            options = st.session_state.nom
+            Données = []
+            G = []
+            if len(options)==1:
+                G = Graph([nom_car[options[0][0]]]).graph()[0]
+                Données.append(Graph([nom_car[options[0][0]]]).graph()[1]) 
+            else:
+                
+                options_1 = []
+                for i in range(len(options)):
+                    options_1.append(nom_car[options[i][0]])
+                G = Graph(options_1).graph()[0]
+                Données.append(Graph(options_1).graph()[1])
+            
+            return G , File(Données[0]).file()
+        
+        T_1 = F1(st.session_state.distance_Jour[0])
+        T_1[0]
+        st.write(T_1[1])
+        st.title("SEMAINES")
+        T_2 = F1(st.session_state.distance_Jour[1])
+        T_2[0]
+        st.write(T_2[1])
+        st.title("MOIS")
+        T_3 = F1(st.session_state.distance_Jour[2])
+        T_3[0]
+        st.write(T_3[1])
+        st.session_state.excel_jr_d = [T_1[1],T_2[1],T_3[1]]
+        
+        
             
         
         
@@ -292,68 +271,103 @@ with tab3:
 
 with tab4:
     
+    
+    
     try:
         st.title("Temps mobile")
         
-        nom_car = st.session_state.temps_jour_mobile
+        def F2(nom_car):
+            name_car = []
+            for i in range(len(nom_car)):
+                name_car.append([i,nom_car[i][0]])
+            options = st.session_state.nom
+            Données = []
+            G = []
+            if len(options)==1:
+                G = GraphTime([nom_car[options[0][0]]]).graph()[0]
+                Données.append(GraphTime([nom_car[options[0][0]]]).graph()[1]) 
+            else:
+                
+                options_1 = []
+                for i in range(len(options)):
+                    options_1.append(nom_car[options[i][0]])
+                G = GraphTime(options_1).graph()[0]
+                Données.append(GraphTime(options_1).graph()[1])
+            return G,File(Données[0]).file()
+        st.title("Jours")
+        T_1 = F2(st.session_state.temps_jour_mobile[0])
+        T_1[0]
+        st.write(T_1[1])
+        st.title("SEMAINES")
+        T_2 = F2(st.session_state.temps_jour_mobile[1])
+        T_2[0]
+        st.write(T_2[1])
+        st.title("MOIS")
+        T_3 = F2(st.session_state.temps_jour_mobile[2])
+        T_3[0]
+        st.write(T_3[1])
+        st.session_state.excel_jr_tm = [T_1[1],T_2[1],T_3[1]]
         
-        name_car = []
-        for i in range(len(nom_car)):
-            name_car.append([i,nom_car[i][0]])
-        options = st.session_state.nom
-        Données = []
-        if len(options)==1:
-            GraphTime([nom_car[options[0][0]]]).graph()[0]
-            Données.append(GraphTime([nom_car[options[0][0]]]).graph()[1]) 
-        else:
-            
-            options_1 = []
-            for i in range(len(options)):
-                options_1.append(nom_car[options[i][0]])
-            GraphTime(options_1).graph()[0]
-            Données.append(GraphTime(options_1).graph()[1])
-        
-        col1_111,col1_122 = st.columns(2)
-        with col1_111:
-             nom = st.text_input('Entrer le nom du fichier avnt de télécharger'+" ")
-             submitted = st.button("Télécharger le fichier excel"+" ")
-             if submitted:
-                 
-                 File(Données[0]).file().to_excel(nom+".xlsx")  
-                 st.success("Votre fichier à été téléchargé avec succes 😃")
-        with col1_122:
-            st.write("")
-        
-        
-        
+######################################################################{###########}     
         st.title("Temps immobile")
         
         nom_cars = st.session_state.temps_jour_immobile
+        def F3(nom_cars):
+            name_cars = []
+            for i in range(len(nom_cars)):
+                name_cars.append([i,nom_cars[i][0]])
+            optionss = st.session_state.nom
+            Données = []
+            G = []
+            if len(optionss)==1:
+                G = GraphTime([nom_cars[optionss[0][0]]]).graph()[0]
+                Données.append(GraphTime([nom_cars[optionss[0][0]]]).graph()[1]) 
+            else:
+                
+                options_1 = []
+                for i in range(len(optionss)):
+                    options_1.append(nom_cars[optionss[i][0]])
+                G = GraphTime(options_1).graph()[0]
+                Données.append(GraphTime(options_1).graph()[1])
+            return G,File(Données[0]).file()
         
-        name_cars = []
-        for i in range(len(nom_cars)):
-            name_cars.append([i,nom_cars[i][0]])
-        optionss = st.session_state.nom
-        Données = []
-        if len(optionss)==1:
-            GraphTime([nom_cars[optionss[0][0]]]).graph()[0]
-            Données.append(GraphTime([nom_cars[optionss[0][0]]]).graph()[1]) 
-        else:
-            
-            options_1 = []
-            for i in range(len(optionss)):
-                options_1.append(nom_cars[optionss[i][0]])
-            GraphTime(options_1).graph()[0]
-            Données.append(GraphTime(options_1).graph()[1])
+        st.title("Jours")
+        T_11 = F3(st.session_state.temps_jour_immobile[0])
+        T_11[0]
+        st.write(T_11[1])
+        st.title("SEMAINES")
+        T_21 = F3(st.session_state.temps_jour_immobile[1])
+        T_21[0]
+        st.write(T_21[1])
+        st.title("MOIS")
+        T_31 = F3(st.session_state.temps_jour_immobile[2])
+        T_31[0]
+        st.write(T_31[1])
+        st.session_state.excel_jr_tim = [T_11[1],T_21[1],T_31[1]]
         
         col1_111,col1_122 = st.columns(2)
         with col1_111:
-             nom = st.text_input('Entrer le nom du fichier avnt de télécharger'+"  ")
-             submitted = st.button("Télécharger le fichier excel"+"  ")
-             if submitted:
-                 
-                 File(Données[0]).file().to_excel(nom+".xlsx")  
-                 st.success("Votre fichier à été téléchargé avec succes 😃")
+             
+             with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+                 # Write each dataframe to a different worksheet.
+                 st.session_state.excel_jr_d[0].to_excel(writer, sheet_name='Distance Jours')
+                 st.session_state.excel_jr_d[1].to_excel(writer, sheet_name='Distance Semaines')
+                 st.session_state.excel_jr_d[2].to_excel(writer, sheet_name='Distance Mois')
+                 st.session_state.excel_jr_tm[0].to_excel(writer, sheet_name='Temps Mobile Jours')
+                 st.session_state.excel_jr_tm[1].to_excel(writer, sheet_name='Temps Mobile Semaines')
+                 st.session_state.excel_jr_tm[2].to_excel(writer, sheet_name='Temps Mobile Mois')
+                 st.session_state.excel_jr_tim[0].to_excel(writer, sheet_name='Temps Immobile Jours')
+                 st.session_state.excel_jr_tim[1].to_excel(writer, sheet_name='Temps Immobile Semaines')
+                 st.session_state.excel_jr_tim[2].to_excel(writer, sheet_name='Temps Immobile Mois')
+                 # Close the Pandas Excel writer and output the Excel file to the buffer
+                 writer.save()
+                 st.header("Téléchargher toutes les données : distances, temps mobiles , temps immobiles au format excel")
+                 st.download_button(
+                     label="Télécharger",
+                     data=buffer,
+                     file_name="Données GPS.xlsx",
+                     mime="application/vnd.ms-excel"
+                 )
         with col1_122:
             st.write("")
         
