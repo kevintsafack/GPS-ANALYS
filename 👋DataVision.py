@@ -347,7 +347,7 @@ with tab4:
         
         col1_111,col1_122 = st.columns(2)
         with col1_111:
-             
+             st.title('Télécharger')
              with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                  # Write each dataframe to a different worksheet.
                  st.session_state.excel_jr_d[0].to_excel(writer, sheet_name='Distance Jours')
