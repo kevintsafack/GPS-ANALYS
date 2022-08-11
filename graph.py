@@ -62,7 +62,7 @@ class GraphTime :
                 continue
 
         
-        print(d_text)
+       
         source_1 =  pd.DataFrame({ 'Valeurs': Dist ,
                                     'Voitures' :name ,
                                        'Dates': Jrs,
@@ -110,7 +110,7 @@ class File :
             else:
                 DF.append(S.loc[A_1[i][0]])
 
-        space = pd.DataFrame({ 'Valeurs': [' '] ,
+        space = pd.DataFrame({ 'Valeurs': [0] ,
                                'Voitures' :[' '] ,
                               'Dates':[ ' '],
                                'Text' :[' ']
