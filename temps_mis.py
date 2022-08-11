@@ -48,20 +48,22 @@ class Temps:
 # t == valeur de la vitsse en nombre réel
 # 
 class Tem :
-    def __init__(self,dataframe,nn=1,p=24):
+    def __init__(self,dataframe,nn=1,j_s_m=0,p=24):
         self.nn = nn
+        self.j_s_m = j_s_m # j = 0 pour jours, s = 1 pour semaine , m = 2 pour le mois
         self.p = p
         self.dataframe = dataframe
     def temps(self):
         S = self.dataframe[1]
         Q = self.dataframe[2]
         Z = Ordre(Q).Periodes()
-        d_1 = Groupes(Q,Z[0],1).G_J_S_M()
+        d_1 = Groupes(Q,Z[self.j_s_m],1).G_J_S_M()
+        nn_1 = len(d_1[1][0])
         d = Groupes(Q,d_1[1],self.nn).G_J_S_M()
         g = [] #☺ regrouper les intervalle de date
-        if self.nn > 1 :
-            for i in range(len(d[0])):
-                g.append(d[0][i][0]+"--"+d[0][i][-1])
+        if (self.nn > 1) | (nn_1 >1) :
+            for i in range(len(d[1])):
+                g.append(d[1][i][0]+"--"+d[1][i][-1])
         else :
             for i in range(len(d[0])):
                 g.append(d[0][i][0])
@@ -70,20 +72,18 @@ class Tem :
         T = []
         for i in range(len(d[1])):
             if len(d[0][i]) == 1:
-                print(i)
                 d_1 = Distance(S.loc[d[0][i][0]]).distance()
                 v=Vitesse(S.loc[d[0][i][0]]).vitesse()
                 O.append(d_1)
                 V.append(v)
-                T.append(Temps(d_1,v,self.nn,self.p).temps())
+                T.append(Temps(d_1,v,self.nn*nn_1,self.p).temps())
                 
             else :
-                print(i)
                 d_1 = Distance(S.loc[d[0][i][0]:d[0][i][-1]]).distance()
                 v=Vitesse(S.loc[d[0][i][0]:d[0][i][-1]]).vitesse()
                 O.append(d_1)
                 V.append(v)
-                T.append(Temps(d_1,v,self.nn,self.p).temps())
+                T.append(Temps(d_1,v,self.nn*nn_1,self.p).temps())
         t_m = []
         t_i = []
         j_m = []
