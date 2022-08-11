@@ -9,3 +9,4 @@ streamlit==1.11.0
 streamlit-authenticator==0.2.1
 streamlit-lottie==0.0.3
 streamlit-option-menu==0.3.2
+XlsxWriter==3.0.3
